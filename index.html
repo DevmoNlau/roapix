@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roblox Profile</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 text-gray-900">
+    <div class="container mx-auto p-6">
+        <div class="mb-6">
+            <label for="userIdInput" class="block text-lg font-medium">Enter Roblox Username:</label>
+            <input type="text" id="userIdInput" class="mt-2 p-2 w-full border rounded" placeholder="Roblox Username">
+            <button onclick="getAvatar()" class="mt-3 px-4 py-2 bg-blue-500 text-white rounded">Get Profile</button>
+        </div>
+
+        <div id="profileInfo" class="hidden">
+            <h3 class="text-xl font-semibold">Username: <span id="robloxName"></span></h3>
+
+            <h3 class="mt-4 text-lg font-medium">Avatar:</h3>
+            <img id="avatarImage" src="" alt="Avatar" class="mt-2 w-32 h-32 rounded-full mx-auto">
+
+            <h3 class="mt-4 text-lg font-medium">Profile Image:</h3>
+            <img id="profileImage" src="" alt="Profile Image" class="mt-2 w-32 h-32 rounded-full mx-auto">
+
+            <h3 class="mt-4 text-lg font-medium">Friends Count: <span id="friendsCount"></span></h3>
+            <h3 class="text-lg font-medium">Followers Count: <span id="followersCount"></span></h3>
+            <h3 class="text-lg font-medium">Followings Count: <span id="followingsCount"></span></h3>
+        </div>
+    </div>
+
+    <script>
+        async function getAvatar() {
+            let username = document.getElementById("userIdInput").value.trim();
+            if (!username) {
+                alert("Please enter a username");
+                return;
+            }
+
+            try {
+                let response = await fetch(`http://localhost:3000/roblox/${username}`);
+                let data = await response.json();
+                if (data.error) {
+                    alert(data.error);
+                    return;
+                }
+
+                document.getElementById("robloxName").textContent = data.displayName;
+                document.getElementById("avatarImage").src = data.avatarUrl;
+                document.getElementById("profileImage").src = data.profileImageUrl;
+                document.getElementById("friendsCount").textContent = data.friendsCount;
+                document.getElementById("followersCount").textContent = data.followersCount;
+                document.getElementById("followingsCount").textContent = data.followingsCount;
+                document.getElementById("profileInfo").style.display = "block";
+            } catch (error) {
+                console.error("❌ Error fetching profile:", error);
+                alert("There was an error fetching the profile!");
+            }
+        }
+    </script>
+</body>
+</html>
